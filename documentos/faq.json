@@ -1,0 +1,92 @@
+[
+  {
+    "id": "FAQ-001",
+    "tema": "envios",
+    "pregunta": "¿Hacen envíos a todo Colombia?",
+    "respuesta": "Sí. Enviamos a todos los municipios de Colombia, incluido Pasto, con Servientrega o Coordinadora. Los tiempos dependen de la zona de destino; consulta la política de envíos."
+  },
+  {
+    "id": "FAQ-002",
+    "tema": "envios",
+    "pregunta": "¿Cuánto cuesta el envío?",
+    "respuesta": "El envío es gratis en compras desde $150.000. Para compras menores, el costo va de $9.900 a $19.900 según la zona de destino."
+  },
+  {
+    "id": "FAQ-003",
+    "tema": "envios",
+    "pregunta": "¿Cómo rastreo mi pedido?",
+    "respuesta": "Cuando tu pedido sale de bodega te enviamos al correo un enlace de rastreo con el formato https://rastreo.ecomarket.example/<número de pedido>. También puedes preguntarle a este asistente con tu número de pedido (ECO-XXXX)."
+  },
+  {
+    "id": "FAQ-004",
+    "tema": "pagos",
+    "pregunta": "¿Qué medios de pago aceptan?",
+    "respuesta": "Aceptamos tarjeta de crédito y débito (Visa, Mastercard, American Express), PSE, Nequi, Daviplata y pago contra entrega en ciudades principales."
+  },
+  {
+    "id": "FAQ-005",
+    "tema": "pagos",
+    "pregunta": "¿Puedo pagar contra entrega?",
+    "respuesta": "Sí, en Bogotá, Medellín, Cali, Barranquilla y Bucaramanga, para compras de hasta $500.000."
+  },
+  {
+    "id": "FAQ-006",
+    "tema": "pagos",
+    "pregunta": "¿Cuándo me devuelven el dinero de una devolución?",
+    "respuesta": "El reembolso se hace al mismo medio de pago en 5 a 10 días hábiles después de que recibimos el producto devuelto."
+  },
+  {
+    "id": "FAQ-007",
+    "tema": "pedidos",
+    "pregunta": "¿Puedo cancelar o modificar mi pedido?",
+    "respuesta": "Puedes cancelarlo o modificarlo sin costo mientras su estado sea 'En preparación'. Una vez enviado ya no es posible cancelarlo; en ese caso puedes solicitar una devolución cuando lo recibas."
+  },
+  {
+    "id": "FAQ-008",
+    "tema": "pedidos",
+    "pregunta": "Mi pedido está retrasado, ¿qué hago?",
+    "respuesta": "Revisa el estado y el motivo del retraso con tu número de pedido. Si el retraso supera 5 días hábiles sobre la fecha estimada, un agente humano te contactará para ofrecerte una solución."
+  },
+  {
+    "id": "FAQ-009",
+    "tema": "cuenta",
+    "pregunta": "¿Necesito crear una cuenta para comprar?",
+    "respuesta": "No. Puedes comprar como invitado; sin embargo, con una cuenta puedes ver tu historial de pedidos y acumular EcoPuntos."
+  },
+  {
+    "id": "FAQ-010",
+    "tema": "cuenta",
+    "pregunta": "¿Qué son los EcoPuntos?",
+    "respuesta": "Por cada $1.000 de compra acumulas 1 EcoPunto. Cada 100 EcoPuntos equivalen a $5.000 de descuento en tu siguiente compra. Los EcoPuntos vencen a los 12 meses."
+  },
+  {
+    "id": "FAQ-011",
+    "tema": "sostenibilidad",
+    "pregunta": "¿Sus empaques son sostenibles?",
+    "respuesta": "Sí. Enviamos en cajas de cartón reciclado, con relleno de papel y cinta de papel. No usamos plástico de un solo uso en nuestros empaques."
+  },
+  {
+    "id": "FAQ-012",
+    "tema": "sostenibilidad",
+    "pregunta": "¿Cómo sé que los productos son realmente ecológicos?",
+    "respuesta": "Todos nuestros proveedores pasan por una evaluación de materiales y origen. Los productos con certificación (por ejemplo, algodón orgánico o comercio justo) lo indican en su descripción del catálogo."
+  },
+  {
+    "id": "FAQ-013",
+    "tema": "productos",
+    "pregunta": "¿La botella térmica sirve para bebidas calientes?",
+    "respuesta": "Sí. La botella térmica de acero inoxidable de 750 ml mantiene bebidas calientes hasta 12 horas y frías hasta 24 horas. No se recomienda lavarla en lavavajillas."
+  },
+  {
+    "id": "FAQ-014",
+    "tema": "productos",
+    "pregunta": "¿Tienen tallas para la camiseta de algodón orgánico?",
+    "respuesta": "Sí, está disponible en tallas S, M, L y XL. Si la talla no te queda, puedes devolverla dentro de los 30 días siguientes a la entrega, sin usar y con sus etiquetas."
+  },
+  {
+    "id": "FAQ-015",
+    "tema": "atencion",
+    "pregunta": "¿Cómo hablo con una persona?",
+    "respuesta": "Escribe 'hablar con un agente' en el chat o escríbenos a soporte@ecomarket.example. Nuestro horario de atención humana es de lunes a sábado, de 8:00 a. m. a 6:00 p. m."
+  }
+]

@@ -1,0 +1,14 @@
+sku,producto,categoria,descripcion,materiales,precio_cop,devolvible,garantia,disponibilidad
+ECO-P001,Cepillo de dientes de bambú (x4),Higiene personal,Paquete de 4 cepillos con mango de bambú biodegradable y cerdas suaves libres de BPA.,"Bambú, nailon libre de BPA",24900,No,-,Disponible
+ECO-P002,Botella térmica de acero inoxidable 750 ml,Hogar,Mantiene bebidas calientes hasta 12 horas y frías hasta 24 horas. Apta para bebidas calientes y frías; no apta para lavavajillas.,"Acero inoxidable 18/8, tapa de bambú",89900,Sí,6 meses,Disponible
+ECO-P003,Bolsas reutilizables de algodón orgánico (x5),Hogar,"Set de 5 bolsas de malla y tela para mercado, lavables a máquina.",Algodón orgánico certificado,39900,Sí,-,Disponible
+ECO-P004,Café orgánico de comercio justo 500 g,Alimentos,"Café de origen Huila, tostión media, en grano. Empaque compostable.",Café arábica orgánico,42000,No,-,Disponible
+ECO-P005,Champú sólido de lavanda,Higiene personal,Barra de champú sin sulfatos ni empaque plástico; rinde aproximadamente 60 lavados.,"Aceites vegetales, aceite esencial de lavanda",32900,No,-,Disponible
+ECO-P006,Kit de cubiertos de bambú,Cocina,"Tenedor, cuchillo, cuchara, pitillo y cepillo limpiador en estuche de tela.","Bambú, algodón",34900,Sí,-,Disponible
+ECO-P007,Miel cruda de abejas nativas 350 g,Alimentos,"Miel sin pasteurizar de abejas meliponas, producida por apicultores del Eje Cafetero.",Miel cruda,38000,No,-,Pocas unidades
+ECO-P008,Lámpara solar LED para jardín,Tecnología,Lámpara con panel solar y sensor de luz; se enciende automáticamente al anochecer. Resistente a la lluvia (IP65).,"Aluminio, panel solar policristalino",79900,Sí,12 meses,Disponible
+ECO-P009,Camiseta de algodón orgánico,Ropa,Camiseta unisex teñida con tintes naturales. Tallas S a XL.,Algodón orgánico certificado,59900,Sí,-,Disponible
+ECO-P010,Compostera doméstica 20 L,Jardín,Compostera para residuos orgánicos de cocina con filtro de carbón antiolores y grifo para lixiviado.,Plástico reciclado,189900,Sí,12 meses,Agotado
+ECO-P011,Toallas de tela reutilizables para higiene íntima (x6),Higiene íntima,Paquete de 6 toallas lavables de algodón orgánico con capa impermeable.,"Algodón orgánico, PUL",69900,No,-,Disponible
+ECO-P012,Envolturas de cera de abejas (x3),Cocina,Alternativa al papel film; reutilizables hasta por un año. Lavar con agua fría.,"Algodón, cera de abejas, resina de pino",36900,Sí,-,Disponible
+ECO-P013,Tarjeta de regalo digital,Digital,"Tarjeta de regalo enviada por correo, válida por 12 meses para cualquier producto de la tienda.",-,50000,No,-,Disponible
