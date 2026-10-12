@@ -22,36 +22,11 @@ adaptado para usar **Google Gemini** en lugar de OpenAI.
 | Variable de entorno | `OPENAI_API_KEY` | `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_EMBEDDING_MODEL` |
 | Lectura de `.txt` / `.csv` | Codificación por defecto del SO (cp1252 en Windows: falla con tildes) | `encoding="utf-8"` |
 
-> Si cambias el modelo de embeddings, borra la carpeta `persist/` y vuelve a cargar los documentos:
-> los vectores de modelos distintos no son comparables.
-
 ## Instalación con uv
 
 ```bash
 uv venv
 uv pip install -r requirements.txt
-```
-
-Crea el `.env` a partir de la plantilla y agrega tu API key
-(se obtiene gratis en [Google AI Studio](https://aistudio.google.com/apikey)):
-
-```bash
-copy .env.example .env        # Windows  (Linux/Mac: cp .env.example .env)
-```
-
-> `.env` está en `.gitignore`: nunca subas tu API key al repositorio.
-
-### Si el proyecto está dentro de OneDrive
-
-OneDrive no admite los *hardlinks* que uv usa por defecto e intenta sincronizar los miles de archivos
-del `.venv`. Si ves errores como `os error 396`, crea el entorno fuera de OneDrive:
-
-```powershell
-uv venv $HOME\.venvs\rag-taller-2
-$env:VIRTUAL_ENV = "$HOME\.venvs\rag-taller-2"
-$env:UV_LINK_MODE = "copy"
-uv pip install -r requirements.txt
-& "$HOME\.venvs\rag-taller-2\Scripts\Activate.ps1"
 ```
 
 ## Uso
@@ -64,8 +39,5 @@ uv run python create_relational_db.py
 uv run streamlit run chats.py
 ```
 
-Si usas el entorno fuera de OneDrive, actívalo y ejecuta los comandos sin `uv run`
-(`python create_relational_db.py`, `streamlit run chats.py`).
-
-En la app: crea un chat, sube documentos (`.txt`, `.pdf`, `.docx`, `.csv`, `.html`, `.md`) o agrega
-links desde la barra lateral, y haz preguntas.
+En la app: se crea un chat, se suben documentos (`.txt`, `.pdf`, `.docx`, `.csv`, `.html`, `.md`) o agrega
+links desde la barra lateral, y se hacen preguntas.
