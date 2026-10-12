@@ -76,8 +76,8 @@ flowchart LR
   milisegundos en un solo nodo.
 - **Costo cero para el prototipo** y ninguna cuenta adicional que crear.
 - **Facilidad:** ya está integrada en el código de referencia que se mostró en la sesión. 
-- **Filtros por metadatos:** permite restringir la búsqueda, por ejemplo
-  `{"tipo": "politica"}` o `{"categoria": "Higiene personal"}`, lo que mejora la precisión.
+- **Filtros por metadatos:** aunque en este taller no se usan, a futuro permitiría restringir la
+  búsqueda, por ejemplo solo a la política de devoluciones o a una categoría de productos.
 
 
 ## Resumen

@@ -37,7 +37,7 @@ def chats_home():
     """
 
     st.markdown(
-        "<h1 style='text-align: center;'>DocSage🧙‍♂️</h1>", unsafe_allow_html=True
+        "<h1 style='text-align: center;'>RAG-Y</h1>", unsafe_allow_html=True
     )
 
     with st.container(border=True):
@@ -187,7 +187,7 @@ def chat_page(chat_id):
         response = (
             generate_answer_from_context(retriever, prompt)
             if retriever
-            else "I need some context to answer that question."
+            else "Aún no hay documentos cargados en este chat. Sube un documento desde la barra lateral para poder responder."
         )
 
         # Save AI response

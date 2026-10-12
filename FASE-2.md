@@ -1,21 +1,22 @@
 # Fase 2: Creación de la base de conocimiento de documentos
 
-Esta fase define **qué** documentos entran, **cómo** se dividen y **cómo** se indexan.
-
 ## 1. Identificación de documentos
 
-| # | Documento | Formato | Contenido | Preguntas que resuelve | Frecuencia de cambio |
-|---|---|---|---|---|---|
-| 1 | **Política de devoluciones y garantías** | PDF ([`documentos/politica-devoluciones.pdf`](documentos/politica-devoluciones.pdf), basado en el Taller 1) | Plazos, condiciones, productos no devolvibles, excepciones por daño, proceso paso a paso | "¿Puedo devolver X?", "¿cuánto tarda el reembolso?" | Baja (trimestral) |
-| 2 | **Catálogo de productos** | CSV ([`documentos/catalogo-productos.csv`](documentos/catalogo-productos.csv)) | Nombre, categoría, descripción, materiales, precio, ¿devolvible?, garantía, disponibilidad | "¿La botella es apta para bebidas calientes?", "¿el champú tiene garantía?" | Alta (semanal) |
-| 3 | **Preguntas frecuentes (FAQ)** | JSON ([`documentos/faq.json`](documentos/faq.json)) | Pares pregunta-respuesta sobre envíos, medios de pago, cuentas, sostenibilidad | "¿Hacen envíos a Pasto?", "¿aceptan PSE?" | Media (mensual) |
-| 4 | **Políticas de envío** | Markdown ([`documentos/politica-envios.md`](documentos/politica-envios.md)) | Cobertura, tiempos por ciudad, costos, transportadoras | "¿Cuánto se demora a Barranquilla?" | Media |
+1. **Política de devoluciones y garantías** (PDF, basada en la del Taller 1): Contiene los
+   plazos, las condiciones, los productos que no se pueden devolver, las excepciones por daño y el
+   proceso de devolución paso a paso.
+2. **Catálogo de productos** (CSV):  Una fila por producto
+   con su nombre, categoría, descripción, materiales, precio, si es devolvible, garantía y
+   disponibilidad.
+3. **Preguntas frecuentes** (JSON):  Pares de pregunta y respuesta sobre envíos, medios de pago, 
+    cuentas y sostenibilidad.
+4. **Política de envíos** (Markdown): Cobertura, tiempos de entrega por ciudad, costos y transportadoras.
 
 ## 2. Segmentación (chunking)
 
 ### 2.1 Estrategias posibles
 
-| Estrategia | Cómo funciona | Ventajas | Desventajas |
+| Estrategia | Funcionamiento | Ventajas | Desventajas |
 |---|---|---|---|
 | **Tamaño fijo** (`CharacterTextSplitter`, la del repo de referencia: 1000 caracteres, sin solapamiento) | Corta cada N caracteres o tokens | Simple y predecible | Corta reglas, frases o filas por la mitad. Sin solapamiento, se pierde el contexto entre fragmentos. |
 | **Por párrafos o separador** | Corta en `\n\n` | Respeta las unidades naturales del texto | Los párrafos tienen tamaños muy desiguales: algunos son enormes y otros casi vacíos |
@@ -23,89 +24,86 @@ Esta fase define **qué** documentos entran, **cómo** se dividen y **cómo** se
 | **Por estructura del documento** | Una fila del CSV, un par de la FAQ, una sección numerada o un encabezado de Markdown por fragmento | Cada fragmento es una **unidad de significado** completa y autocontenida | Requiere un *loader* o *splitter* específico por formato |
 | **Semántica** | Corta donde cambia el tema, según la similitud entre oraciones | Fragmentos temáticamente coherentes | Más lenta y costosa, porque calcula embeddings al segmentar; poco necesaria con documentos cortos y bien estructurados |
 
-### 2.2 Estrategia propuesta: **segmentación por tipo de documento**
+### 2.2 Estrategia propuesta: **segmentación recursiva**
 
-Se propone una estrategia por cada tipo de documento del RAG: 
+Se propone usar un solo `RecursiveCharacterTextSplitter` para todos los documentos, con fragmentos
+de unos 800 caracteres y un solapamiento de unos 100. Es el cambio más pequeño posible sobre el
+repositorio de referencia: reemplaza el `CharacterTextSplitter` por el recursivo, y el resto del
+flujo queda igual.
 
-| Documento | Estrategia | Unidad de fragmento | Tamaño aprox. | Metadatos |
-|---|---|---|---|---|
-| Política de devoluciones | **Recursiva** con separadores ajustados a las secciones numeradas | Una regla o sección | 300–800 caracteres, solapamiento de ~100 | `tipo=politica`, `seccion`, `vigencia` |
-| Catálogo (CSV) | **Por fila** (`CSVLoader` ya genera un `Document` por fila) | Un producto | Una fila | `tipo=producto`, `categoria`, `devolvible`, `sku` |
-| FAQ (JSON) | **Por par** pregunta-respuesta | Una pregunta con su respuesta | Variable (corto) | `tipo=faq`, `tema` |
-| Envíos (MD/HTML) | **Por encabezado** (`MarkdownHeaderTextSplitter`) y luego recursiva si la sección es larga | Una sección | 300–800 caracteres | `tipo=envios`, `seccion` |
+Además, se aprovecha que dos de los documentos ya vienen divididos en unidades naturales:
+
+- **Catálogo (CSV):** `CSVLoader` crea un `Document` por fila, así que cada producto queda en su
+  propio fragmento sin hacer nada adicional.
+- **Preguntas frecuentes (JSON):** cada par de pregunta y respuesta se carga como un `Document`, así
+  que cada pregunta queda con su respuesta.
+- **Política de devoluciones (PDF) y política de envíos (Markdown):** son los textos largos. Aquí el
+  splitter recursivo intenta cortar primero por párrafos y luego por líneas, de modo que en la
+  mayoría de los casos cada regla o sección queda completa.
 
 ### 2.3 Justificación
 
 - **Precisión:** la pregunta de un cliente suele referirse a **una** regla o **un** producto. Si el
   fragmento contiene exactamente esa unidad, su embedding queda más cerca de la pregunta que uno de
   1000 caracteres que mezcla tres temas.
-- **Riesgo del tamaño fijo, observado en la práctica:** al indexar la política de devoluciones del Taller 1 con el
-  `CharacterTextSplitter` original, LangChain advirtió `Created a chunk of size 1025, which is longer
-  than the specified 1000`. Además, la tabla de productos y las reglas quedan mezcladas en el mismo
-  fragmento. Con tamaño fijo y sin solapamiento, la regla 4 (excepción por daño) podría quedar separada de
-  la regla 3 (no devolvibles), y el modelo respondería "no se puede devolver" **sin mencionar la
-  excepción**.
-- **Solapamiento (~100 caracteres) en la política:** conserva el contexto cuando una regla depende de la
-  anterior. No se usa en el CSV ni en la FAQ, porque cada fila o par ya es autocontenido.
-- **Tamaño moderado (300–800 caracteres):** los fragmentos muy pequeños pierden contexto ("No" ¿no
-  qué?) y los muy grandes diluyen la señal y gastan tokens del LLM. Con `k = 4`, el contexto enviado
-  queda por debajo de unos 3.000 caracteres.
-- **Metadatos:** permiten filtrar (`tipo=producto`), citar la fuente en la respuesta y re-indexar
-  solo un documento cuando cambia.
+- **Riesgo del tamaño fijo, observado en la práctica:** en este repositorio probamos el
+  `CharacterTextSplitter` original (1000 caracteres, sin solapamiento) con el archivo
+  `politica-devoluciones.txt` del Taller 1. Se generaron 4 fragmentos: uno de 36 caracteres con solo
+  el título, uno de 1025 caracteres con las 7 reglas juntas, uno de 18 caracteres con solo "LISTA DE
+  PRODUCTOS" y uno de 1314 caracteres con la tabla de productos, ya sin su título. LangChain además
+  advirtió `Created a chunk of size 1025, which is longer than the specified 1000`. Es decir, quedan
+  fragmentos casi vacíos que no aportan nada al buscar, la tabla queda separada de su título y los
+  fragmentos superan el tamaño pedido. Con un documento más largo, un corte fijo también podría
+  separar la regla 4 (excepción por daño) de la regla 3 (no devolvibles), y el modelo respondería
+  "no se puede devolver" **sin mencionar la excepción**.
+- **Solapamiento (~100 caracteres):** si una regla queda partida entre dos fragmentos, el
+  solapamiento repite el final del primero al inicio del segundo, y así no se pierde el contexto.
+- **Tamaño moderado (~800 caracteres):** los fragmentos muy pequeños pierden contexto ("No" ¿no
+  qué?) y los muy grandes diluyen la señal y gastan tokens del LLM.
+- **Simplicidad:** se mantiene la estructura del repositorio de referencia y solo se cambia el
+  splitter, lo que facilita comparar el comportamiento antes y después del cambio.
 
 ## 3. Indexación
 
+La indexación consiste en preparar los documentos de EcoMarket para que después se puedan buscar
+por significado y no solo por palabras exactas. Ocurre una sola vez por documento, cuando se carga.
+Luego, cada vez que un cliente pregunta, se usa lo que quedó guardado:
+
 ```mermaid
-flowchart LR
-    subgraph Ingesta
-        A1[documentos/politica-devoluciones.pdf] --> L[Loader según formato<br/>PyPDFLoader · CSVLoader · JSON · Markdown]
-        A2[documentos/catalogo-productos.csv] --> L
-        A3[documentos/faq.json] --> L
-        A4[documentos/politica-envios.md] --> L
+flowchart TD
+    subgraph IDX["Indexación: una vez por documento"]
+        D["Documentos de EcoMarket<br/>política de devoluciones, catálogo,<br/>preguntas frecuentes, política de envíos"]
+        D --> L["1. Lectura<br/>se extrae el texto de cada archivo,<br/>sin importar su formato"]
+        L --> S["2. Fragmentación<br/>el texto se divide en trozos pequeños<br/>con sentido propio: una regla,<br/>un producto o una pregunta"]
+        S --> E["3. Embeddings<br/>cada fragmento se convierte en un vector"]
+        E --> V[("4. Base de datos vectorial<br/>guarda cada vector junto<br/>con su texto original")]
     end
-    L --> C[Limpieza<br/>quitar ruido · normalizar UTF-8]
-    C --> S[Splitter por tipo<br/>recursivo · por fila · por par · por encabezado]
-    S --> M[Enriquecer metadatos<br/>tipo · fuente · categoría · vigencia]
-    M --> E[gemini-embedding-001<br/>task: RETRIEVAL_DOCUMENT]
-    E --> V[(ChromaDB<br/>colección ecomarket<br/>persist/)]
+
+    subgraph CON["Consulta: cada vez que el cliente pregunta"]
+        Q["Pregunta del cliente<br/>¿Puedo devolver un champú?"]
+        Q --> QE["La pregunta se convierte en vector<br/>con el mismo modelo de embeddings"]
+        QE --> B["Se buscan los fragmentos<br/>con el significado más parecido"]
+        B --> R["El LLM responde usando<br/>solo esos fragmentos como contexto"]
+    end
+
+    V -.-> B
 ```
 
 ### Paso a paso
 
-1. **Carga:** un *loader* por formato convierte cada archivo en objetos `Document`
-   (`page_content` + `metadata`). En el repositorio, esto lo hace `load_document()` en
-   `vector_functions.py`, que se ajustó para leer en UTF-8 y no fallar con tildes en Windows.
-2. **Limpieza:** se normaliza el texto y se eliminan encabezados repetidos y ruido de HTML.
-3. **Segmentación:** se aplica el *splitter* correspondiente a cada tipo (sección 2.2).
-4. **Metadatos:** a cada fragmento se le agregan `tipo`, `fuente`, `categoria` y `vigencia`, además de
-   un **ID estable** (por ejemplo, un hash de `fuente + sección`). Así, al re-indexar se
-   **actualiza** el fragmento en lugar de duplicarlo.
-5. **Embeddings:** cada fragmento se envía a `gemini-embedding-001`, que devuelve un vector de 3072
-   dimensiones (verificado en la prueba del repo). Los documentos se vectorizan como
-   `RETRIEVAL_DOCUMENT` y las preguntas como `RETRIEVAL_QUERY`. LangChain hace esta distinción
-   automáticamente en `embed_documents()` y `embed_query()`. Los envíos se hacen por lotes para
-   respetar la cuota de la API.
-6. **Carga en Chroma:** `Chroma.from_documents(...)` guarda vectores, texto y metadatos en la
-   colección, persistida en `./persist`. En el repositorio, esto lo hace `create_collection()`, y
-   `add_documents_to_collection()` permite agregar documentos nuevos.
-7. **Consulta (tiempo de ejecución):** la pregunta se vectoriza con el **mismo** modelo y Chroma
-   devuelve los `k` fragmentos más cercanos que superen el `score_threshold`
-   (`load_retriever()`). Si ninguno lo supera, el asistente debe responder que no tiene la
-   información y ofrecer escalar a un agente humano. Esto cumple el requisito del taller de "hacerle
-   saber al usuario que no tiene las herramientas para atender su solicitud".
+1. **Carga:** desde la barra lateral de la app se sube el documento. `load_document()` en
+   `vector_functions.py` elige el *loader* según la extensión (`PyPDFLoader`, `CSVLoader`,
+   `UnstructuredMarkdownLoader`) y lo convierte en objetos `Document`, que tienen el texto y algunos
+   metadatos básicos como el nombre del archivo, la página o la fila.
+2. **Segmentación:** el `RecursiveCharacterTextSplitter` divide los documentos largos en fragmentos.
+3. **Embeddings:** cada fragmento se envía a `gemini-embedding-001`, que devuelve un vector de 3072
+   dimensiones.
+4. **Almacenamiento:** `create_collection()` guarda los vectores y el texto en ChromaDB, en la
+   carpeta `./persist`. Si el chat ya tiene documentos, `add_documents_to_collection()` agrega los
+   nuevos a la misma colección.
 
-### Mantenimiento del índice
-
-| Evento | Acción |
-|---|---|
-| Cambia la política | Re-indexar solo los fragmentos con `fuente=politica` (*upsert* por ID estable) |
-| Producto nuevo o descontinuado | Agregar o eliminar la fila correspondiente en la colección |
-| Cambio de modelo de embeddings | Borrar `persist/` y re-indexar todo |
-| Pregunta frecuente sin respuesta | Detectada en los registros (sin contexto recuperado); se agrega a `faq.json` |
-
-## 4. Próximo paso (Fase 3)
-
-Los cuatro documentos de ejemplo ya están en la carpeta [`documentos/`](documentos/). Falta
-reemplazar el `CharacterTextSplitter` por la segmentación por tipo, y adaptar el prompt de
-`generate_answer_from_context()` con el rol, los delimitadores y el manejo de "no sé" del
-`settings-final.toml` del Taller 1.
+Cuando el cliente hace una pregunta, esta se convierte en vector con el **mismo** modelo, y
+`load_retriever()` devuelve los fragmentos más parecidos que superen el umbral de similitud
+(`score_threshold`). Si ninguno lo supera, el asistente debe responder que no tiene la información,
+que es lo que pide el taller: "hacerle saber al usuario que no tiene las herramientas para atender su
+solicitud".
